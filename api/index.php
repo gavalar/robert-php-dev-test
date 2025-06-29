@@ -1,6 +1,7 @@
 <?php
 namespace Roger;
 
+require_once(dirname(__FILE__) . '/cors.php');
 require_once(dirname(__FILE__) . '/../src/TranslationUnitController.php');
 
 use Roger\TranslationUnitController as Controller;
