@@ -19,7 +19,7 @@ class TranslationUnitControllerTest extends TestCase
     {
         // Set up a client instance to simulate HTTP requests
         $this->client = new Client([
-            'base_uri' => 'http://localhost/api/', // The base URL of your API
+            'base_uri' => 'http://localhost:8000/api/', // The base URL of your API
         ]);
     }
 

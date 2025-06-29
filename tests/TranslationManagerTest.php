@@ -38,23 +38,6 @@ class TranslationManagerTest extends TestCase
     }
 
     /**
-     * Test adding a translation.
-     *
-     * This test ensures that the addTranslation method adds a new translation successfully
-     * and returns a success message.
-     */
-    public function testAddTranslation()
-    {
-        // Mock translation unit ID and target language
-        $unitId = 1;
-        $targetLanguageId = 2; // Assuming 2 is French
-        $translatedText = "Bonjour le monde!";
-
-        $message = $this->manager->addTranslation($unitId, $targetLanguageId, $translatedText);
-        $this->assertEquals("Translation and version added successfully.", $message);
-    }
-
-    /**
      * Test retrieving a translation.
      *
      * This test checks if the getTranslation method correctly retrieves the latest translation

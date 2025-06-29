@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-GavinCorbett',
         'version' => 'dev-GavinCorbett',
-        'reference' => '3f4a8b1d95894631c30d6629dfcf0a37b8b4d3f4',
+        'reference' => '3e408050039f8139ce30cdf4882a64abd6133cf0',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-GavinCorbett',
             'version' => 'dev-GavinCorbett',
-            'reference' => '3f4a8b1d95894631c30d6629dfcf0a37b8b4d3f4',
+            'reference' => '3e408050039f8139ce30cdf4882a64abd6133cf0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

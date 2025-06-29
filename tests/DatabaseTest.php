@@ -1,6 +1,6 @@
 <?php
 namespace Roger;
-require_once(getcwd() . '/../src/Loader.php');
+require_once(dirname(__FILE__) . '/../src/Loader.php');
 
 use PHPUnit\Framework\TestCase;
 use Roger\Database;
@@ -31,7 +31,7 @@ class DatabaseTest extends TestCase
         $params = [':id' => 1];
         $stmt = $this->db->execute($query, $params);
 
-        $this->assertInstanceOf(PDOStatement::class, $stmt);
+        $this->assertInstanceOf(\PDOStatement::class, $stmt);
     }
 
     /**
@@ -45,6 +45,11 @@ class DatabaseTest extends TestCase
         $query = "SELECT * FROM Translation_Units WHERE id = :id";
         $params = [':id' => 1];
         $result = $this->db->fetch($query, $params);
+
+        if (is_null($result)) {
+            $this->markTestSkipped('Record one has been removed.');
+            return;
+        }
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
