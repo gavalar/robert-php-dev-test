@@ -217,4 +217,201 @@ class TranslationManager
             'translatedLanguageId' => $targetLanguageId
         ];
     }
+
+    /**
+     * Retrieve a list of translation units with a limit on the number of units.
+     *
+     * @param int $limit The maximum number of translation units to return (defaults to 10).
+     * @return array The list of translation units.
+     * @throws Exception If there is an error with the database query.
+     */
+    public function getTranslationUnits(int $limit = 10): array
+    {
+        try {
+            $query = sprintf("SELECT * FROM Translation_Units LIMIT %d", $limit);
+            $params = [];
+            return $this->db->fetchAll($query, $params);
+        } catch (Exception $e) {
+            throw new Exception("Failed to fetch translation units: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Retrieve a translation unit by its ID.
+     *
+     * @param int $id The ID of the translation unit.
+     * @return array The translation unit data.
+     * @throws Exception If the translation unit is not found.
+     */
+    public function getTranslationUnitById(int $id): array
+    {
+        try {
+            $query = "SELECT * FROM Translation_Units WHERE id = :id LIMIT 1";
+            $params = [':id' => $id];
+            $result = $this->db->fetch($query, $params);
+
+            if (!$result) {
+                throw new Exception("Translation unit with ID $id not found.");
+            }
+
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception("Error retrieving translation unit: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update an existing translation unit.
+     *
+     * This method updates the source text and/or status of a translation unit identified by its ID.
+     *
+     * @param int $unitId The ID of the translation unit to update.
+     * @param string|null $sourceText The new source text to set (optional).
+     * @param string|null $status The new status to set (optional).
+     * @return void
+     * @throws Exception If an error occurs during the update.
+     */
+    public function updateTranslationUnit(int $unitId, ?string $sourceText = null, ?string $status = null): void
+    {
+        // Start building the query and parameters
+        $query = "UPDATE Translation_Units SET updated_at = NOW()";
+        $params = [':unitId' => $unitId];
+
+        // Add source_text update if provided
+        if ($sourceText !== null) {
+            $query .= ", source_text = :sourceText";
+            $params[':sourceText'] = $sourceText;
+        }
+
+        // Add status update if provided
+        if ($status !== null) {
+            $query .= ", status = :status";
+            $params[':status'] = $status;
+        }
+
+        // Finish the query with the WHERE clause
+        $query .= " WHERE id = :unitId";
+
+        try {
+            $this->db->execute($query, $params);  // Execute the query
+        } catch (Exception $e) {
+            throw new Exception("Error updating translation unit: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete a translation unit by ID.
+     *
+     * This method deletes a translation unit from the database based on the given ID.
+     *
+     * @param int $unitId The ID of the translation unit to delete.
+     * @return void
+     * @throws Exception If an error occurs during deletion.
+     */
+    public function deleteTranslationUnit(int $unitId): void
+    {
+        try {
+            $query = "DELETE FROM Translation_Units WHERE id = :unitId";
+            $params = [':unitId' => $unitId];
+            $this->db->execute($query, $params);  // Execute the query
+        } catch (Exception $e) {
+            throw new Exception("Error deleting translation unit: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update an existing translation by translation ID and language ID.
+     *
+     * This method updates the translated text for a translation identified by the translation ID and language ID.
+     *
+     * @param int $translationId The ID of the translation to update.
+     * @param int $languageId The ID of the target language for the translation.
+     * @param string $translatedText The new translated text to replace the old one.
+     * @return void
+     * @throws Exception If an error occurs during the update.
+     */
+    public function updateTranslation(int $translationId, int $languageId, string $translatedText): void
+    {
+        if (!$this->isValidLanguage($languageId)) {
+            throw new \Exception(sprintf('Language Code %d is invalid', $languageId));
+        }
+
+        // First, validate that the translation exists for the provided language ID
+        $query = "
+            SELECT * FROM Translations
+            WHERE id = :translationId AND target_language_id = :languageId
+            LIMIT 1
+        ";
+        $params = [
+            ':translationId' => $translationId,
+            ':languageId' => $languageId
+        ];
+
+        $translation = $this->db->fetch($query, $params);
+
+        if (!$translation) {
+            throw new Exception("Translation not found for translation ID $translationId and language ID $languageId.");
+        }
+
+        // Update the translation with the new translated text
+        $query = "
+            UPDATE Translations
+            SET translated_text = :translatedText, updated_at = NOW()
+            WHERE id = :translationId AND target_language_id = :languageId
+        ";
+        $params = [
+            ':translatedText' => $translatedText,
+            ':translationId' => $translationId,
+            ':languageId' => $languageId
+        ];
+
+        try {
+            $this->db->execute($query, $params);  // Execute the query to update the translation
+        } catch (Exception $e) {
+            throw new Exception("Error updating translation: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete a translation by translation ID and language ID.
+     *
+     * This method deletes a translation from the database based on the given translation ID and language ID.
+     *
+     * @param int $translationId The ID of the translation to delete.
+     * @return void
+     * @throws Exception If an error occurs during the deletion.
+     */
+    public function deleteTranslation(int $translationId): void
+    {
+        // Validate that the translation exists in the specified language
+        $query = "
+            SELECT * FROM Translations
+            WHERE id = :translationId
+            LIMIT 1
+        ";
+        $params = [
+            ':translationId' => $translationId
+        ];
+
+        $translation = $this->db->fetch($query, $params);
+
+        if (!$translation) {
+            throw new Exception("Translation not found for translation ID $translationId and language ID $languageId.");
+        }
+
+        // Delete the translation
+        $query = "
+            DELETE FROM Translations
+            WHERE id = :translationId
+        ";
+        $params = [
+            ':translationId' => $translationId
+        ];
+
+        try {
+            $this->db->execute($query, $params);  // Execute the query to delete the translation
+        } catch (Exception $e) {
+            throw new Exception("Error deleting translation: " . $e->getMessage());
+        }
+    }
 }
