@@ -1,10 +1,9 @@
 <?php
-
 namespace Roger;
-use \Exception as Exception;
 
-require_once(getcwd() . '/Database.php');
-require_once(getcwd() . '/TranslationStrategy.php');
+require_once(dirname(__FILE__) . '/Loader.php');
+
+use \Exception as Exception;
 
 /**
  * TranslationFactory (Factory Pattern)

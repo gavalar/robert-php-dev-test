@@ -11,8 +11,6 @@
 
 * **Singleton Pattern:** Used for handling connection to the DB and managing the translation.
 * **Strategy Pattern:** Allows you to swap out translation strategies (e.g., human vs machine).
-* **Memento Pattern:** Simplifies the rollback functionality and enables version control.
-* **Observer Pattern:** Helps with notifying other components of the system when changes occur.
 
 ## Database schema
 

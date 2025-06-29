@@ -1,9 +1,7 @@
 <?php
-
 namespace Roger;
 
-require_once(getcwd() . '/Database.php');
-require_once(getcwd() . '/TranslationFactory.php');
+require_once(dirname(__FILE__) . '/Loader.php');
 
 /**
  * Class TranslationManager

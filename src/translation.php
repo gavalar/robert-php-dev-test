@@ -1,7 +1,7 @@
 <?php
 namespace Roger;
 
-require_once(getcwd() . '/TranslationManager.php');
+require_once(dirname(__FILE__) . '/Loader.php');
 
 try {
 // Initialize the TranslationUnit
